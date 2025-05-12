@@ -76,7 +76,7 @@ if [[ -z "$remote_addr" ]]; then
 fi
 
 log_info "Cleaning up temporary files..."
-rm -rf rm -rf node_modules "${NPM_RUN_BUILD_PATH}" || true
+rm -rf node_modules "${NPM_RUN_BUILD_PATH}" || true
 
 build_dist
 
