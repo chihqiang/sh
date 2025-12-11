@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 # ===============================================================================
-# 脚本名称: cloud_disk_expand.sh
+# 脚本名称: disk_expand.sh
 # 功能: 一键交互式云盘扩容脚本
 # 适用环境: Linux 云服务器 (Debian/Ubuntu/CentOS/RHEL/Alibaba Linux 等)
 # 支持文件系统: ext2, ext3, ext4, XFS
@@ -12,7 +12,7 @@ set -euo pipefail
 #   4. 自动检测文件系统类型并扩容文件系统
 #   5. 校验并显示最终分区及文件系统大小
 # 使用方法:
-#   bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/liunx/cloud_disk_expand.sh)"
+#   bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/liunx/disk_expand.sh)"
 # 注意事项:
 #   - 仅支持扩容最后一个分区
 #   - 系统盘扩容请提前备份重要数据
