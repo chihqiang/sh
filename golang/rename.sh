@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "🟢 Go module rename & migrate (interactive)"
+echo
+
+# 1️⃣ 判断是否存在 go.mod
+if [ ! -f go.mod ]; then
+  echo "❌ 当前目录没有 go.mod"
+  exit 1
+fi
+
+# 2️⃣ 获取 go.mod 文件中的 module 名称
+OLD_MODULE=$(go mod edit -json | sed -n 's/.*"Path": "\(.*\)".*/\1/p' | head -n1)
+if [ -z "$OLD_MODULE" ]; then
+  echo "❌ 无法从 go.mod 读取 module"
+  exit 1
+fi
+echo "当前 module: $OLD_MODULE"
+echo
+
+# 3️⃣ 输入新的 module 名称
+read -r -p "请输入新的 module 路径: " NEW_MODULE
+if [ -z "$NEW_MODULE" ]; then
+  echo "❌ 新 module 不能为空"
+  exit 1
+fi
+
+# 4️⃣ 对比新旧 module
+if [ "$NEW_MODULE" = "$OLD_MODULE" ]; then
+  echo "⚠️ 新旧 module 相同，无需修改"
+  exit 0
+fi
+
+echo
+echo "将执行以下操作："
+echo "  - go.mod: $OLD_MODULE → $NEW_MODULE"
+echo "  - 替换 import 中的路径"
+echo "  - 执行 go mod tidy"
+echo "  - 执行 go test ./..."
+echo
+
+read -r -p "确认继续？(y/N): " CONFIRM
+[[ "$CONFIRM" =~ ^[Yy]$ ]] || exit 0
+
+# 5️⃣ 修改 go.mod
+echo "[1/5] 修改 go.mod"
+go mod edit -module "$NEW_MODULE"
+
+# 6️⃣ 遍历所有 go 文件，替换 import 中的旧 module 并打印修改的文件名
+echo "[2/5] 替换 import 路径并打印修改文件"
+
+if sed --version >/dev/null 2>&1; then
+  SED=(-i)
+else
+  SED=(-i '')
+fi
+
+find . -name '*.go' -type f | while read -r file; do
+  # 检查文件中是否存在旧 module
+  if grep -q "$OLD_MODULE" "$file"; then
+    # 替换 import
+    sed "${SED[@]}" -E "/^[[:space:]]*import[[:space:]]+/ s|$OLD_MODULE|$NEW_MODULE|g" "$file"
+    sed "${SED[@]}" -E "/^[[:space:]]*import[[:space:]]*\(/,/^[[:space:]]*\)/ s|$OLD_MODULE|$NEW_MODULE|g" "$file"
+    echo "修改文件: $file"
+  fi
+done
+
+# 7️⃣ 执行 go mod tidy
+echo "[3/5] 执行 go mod tidy"
+go mod tidy
+
+# 8️⃣ 执行 go test ./...
+echo "[4/5] 执行 go test ./..."
+if ! go test ./...; then
+  echo "❌ 测试未通过，请检查代码"
+  exit 1
+fi
+
+# 9️⃣ 输出完成提示
+echo "[5/5] 操作完成 ✅"
+echo "module 已更新为: $NEW_MODULE"
+echo "import 路径已替换，依赖已整理，所有测试通过"
