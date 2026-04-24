@@ -18,157 +18,163 @@ set -euo pipefail
 #   - 系统盘扩容请提前备份重要数据
 #   - 扩容过程需确保云盘容量已在控制台增加
 # ===============================================================================
-# =========================
-# 工具安装
-# =========================
 
-# =========================
-# 检查是否为 root
-# =========================
-if [[ $EUID -ne 0 ]]; then
-    echo "[ERROR] 脚本必须以 root 用户执行"
-    exit 1
+
+echo "=== 云盘扩容工具（交互版） ==="
+
+# root 检查
+if [[ "$(id -u)" -ne 0 ]]; then
+  echo "[ERROR] 请使用 root 运行"
+  exit 1
 fi
 
+# 安装工具
 install_tools() {
-    if [ -f /etc/os-release ]; then
-        . /etc/os-release
-        OS_ID=$ID
-        OS_NAME=$NAME
-    else
-        echo "[ERROR] 无法检测操作系统类型，脚本无法继续执行。"
-        exit 1
-    fi
-
-    case "$OS_ID" in
-        ubuntu|debian)
-            echo "[INFO] 检测到 Debian/Ubuntu 系列，开始安装工具..."
-            apt-get update -y
-            apt-get install -y cloud-guest-utils gdisk
-            ;;
-        centos|rhel|almalinux|rocky|aliyun)
-            echo "[INFO] 检测到 CentOS/RHEL/Alibaba Linux 系列，开始安装工具..."
-            yum install -y cloud-utils-growpart gdisk
-            yum update cloud-utils-growpart
-            ;;
-        *)
-            echo "[ERROR] 未识别操作系统 $OS_NAME ($OS_ID)，脚本无法继续执行。"
-            exit 1
-            ;;
-    esac
-
-    echo "[INFO] 扩容工具安装完成"
+  source /etc/os-release
+  case "$ID" in
+    ubuntu|debian)
+      apt-get update -y
+      apt-get install -y cloud-guest-utils gdisk xfsprogs lvm2
+      ;;
+    centos|rhel|almalinux|rocky|aliyun)
+      yum install -y cloud-utils-growpart gdisk xfsprogs lvm2
+      ;;
+    *)
+      echo "[ERROR] 不支持的系统: $ID"
+      exit 1
+      ;;
+  esac
 }
 
-# =========================
-# 列出可扩容云盘并选择
-# =========================
-choose_disk() {
-    echo "=== 当前可用云盘列表 ==="
-    mapfile -t disks < <(lsblk -d -o NAME,SIZE,TYPE,MOUNTPOINT | awk '$3=="disk"{print $1 " " $2 " " $4}')
-    if [ ${#disks[@]} -eq 0 ]; then
-        echo "[ERROR] 未检测到可用云盘"
-        exit 1
-    fi
-
-    for i in "${!disks[@]}"; do
-        echo "$((i+1)). ${disks[$i]}"
-    done
-
-    read -p "请输入要扩容的云盘编号: " choice
-    if ! [[ "$choice" =~ ^[0-9]+$ ]] || [ "$choice" -lt 1 ] || [ "$choice" -gt "${#disks[@]}" ]; then
-        echo "[ERROR] 输入编号无效"
-        exit 1
-    fi
-
-    disk_name=$(echo "${disks[$((choice-1))]}" | awk '{print $1}')
-    target_disk="/dev/$disk_name"
-    echo "[INFO] 已选择云盘: $target_disk"
-
-    # 判断是否有分区
-    parts=($(lsblk -n -o NAME /dev/$disk_name | grep -E "^$disk_name[0-9]+|^$disk_name" | tail -n +2))
-    if [ ${#parts[@]} -gt 0 ]; then
-        part="${parts[-1]}"
-        target_dev="/dev/$part"
-        echo "[INFO] 存在分区，目标设备为最后一个分区: $target_dev"
-    else
-        target_dev="$target_disk"
-        echo "[INFO] 无分区，目标设备为: $target_dev"
-    fi
-
-    # 获取文件系统类型和挂载点
-    fs_type=$(lsblk -no FSTYPE "$target_dev")
-    mnt=$(lsblk -no MOUNTPOINT "$target_dev")
-    echo "[INFO] 文件系统: $fs_type, 挂载点: ${mnt:-未挂载}"
+# 获取系统盘
+get_root_disk() {
+  df / | tail -1 | awk '{print $1}' | xargs lsblk -no PKNAME
 }
 
-# =========================
-# 分区扩容
-# =========================
+# 选择磁盘
+select_disk() {
+  root_disk=$(get_root_disk)
+  mapfile -t disks < <(lsblk -dn -o NAME,SIZE)
+
+  echo "=== 磁盘列表 ==="
+  for i in "${!disks[@]}"; do
+    echo "$((i+1)). ${disks[$i]}"
+  done
+
+  read -p "请选择磁盘编号: " idx
+  name=$(echo "${disks[$((idx-1))]}" | awk '{print $1}')
+
+  if [[ "$name" == "$root_disk" ]]; then
+    echo "[WARN] 你选择的是系统盘，请谨慎操作"
+  fi
+
+  target_disk="/dev/$name"
+  echo "[INFO] 已选择: $target_disk"
+}
+
+# 获取分区
+get_partition() {
+  mapfile -t parts < <(lsblk -nr -o NAME "$target_disk" | tail -n +2)
+
+  if [[ ${#parts[@]} -gt 0 ]]; then
+    last_part="${parts[${#parts[@]}-1]}"
+    target_dev="/dev/$last_part"
+  else
+    target_dev="$target_disk"
+  fi
+
+  echo "[INFO] 目标设备: $target_dev"
+}
+
+# 显示扩容前后容量对比
+show_capacity() {
+  current_size=$(lsblk -b -no SIZE "$target_dev")
+  echo "[INFO] 当前设备容量: $((current_size/1024/1024/1024))G"
+  # 预计扩容后容量（取磁盘总大小）
+  total_size=$(lsblk -b -no SIZE "$target_disk")
+  echo "[INFO] 预计扩容后容量: $((total_size/1024/1024/1024))G"
+}
+
+# 执行前确认
+confirm_action() {
+  show_capacity
+  if is_lvm; then
+    echo "类型: LVM 扩容（PV/VG/LV + 文件系统）"
+  else
+    echo "类型: 普通分区扩容（分区 + 文件系统）"
+  fi
+  read -p "是否确认执行扩容操作？(yes/no): " ans
+  if [[ "$ans" != "yes" ]]; then
+    echo "[INFO] 操作已取消"
+    exit 1
+  fi
+}
+
+# 扩容分区
 resize_partition() {
-    if [[ "$target_dev" =~ [0-9]+$ ]]; then
-        part_num=$(echo "$target_dev" | grep -o '[0-9]\+$')
-        disk_name=$(lsblk -no pkname "$target_dev")
-        read -p "执行 growpart /dev/$disk_name $part_num 扩容分区吗？(yes/no): " ans
-        if [[ "$ans" == "yes" ]]; then
-            LC_ALL=en_US.UTF-8 growpart "/dev/$disk_name" "$part_num"
-            echo "[INFO] 分区扩容完成"
-        else
-            echo "[INFO] 分区扩容已取消"
-        fi
-    else
-        echo "[INFO] 无需扩容分区"
-    fi
+  if [[ "$target_dev" =~ [0-9]+$ ]]; then
+    disk=$(lsblk -no PKNAME "$target_dev")
+    part_num=$(echo "$target_dev" | grep -o '[0-9]\+$')
+    LC_ALL=C growpart /dev/$disk $part_num
+  fi
 }
 
-# =========================
-# 文件系统扩容
-# =========================
-resize_filesystem() {
-    if [[ "$fs_type" =~ ext[234]? ]]; then
-        read -p "执行 resize2fs $target_dev 扩容文件系统吗？(yes/no): " ans
-        if [[ "$ans" == "yes" ]]; then
-            resize2fs "$target_dev"
-            echo "[INFO] ext 文件系统扩容完成"
-        else
-            echo "[INFO] 文件系统扩容已取消"
-        fi
-    elif [[ "$fs_type" == "xfs" ]]; then
-        if [ -z "$mnt" ]; then
-            echo "[WARN] XFS 文件系统未挂载，请挂载后手动执行 xfs_growfs"
-        else
-            read -p "执行 xfs_growfs $mnt 扩容文件系统吗？(yes/no): " ans
-            if [[ "$ans" == "yes" ]]; then
-                xfs_growfs "$mnt"
-                echo "[INFO] XFS 文件系统扩容完成"
-            else
-                echo "[INFO] 文件系统扩容已取消"
-            fi
-        fi
-    else
-        echo "[WARN] 无法识别文件系统类型，请手动扩容"
-    fi
+# 判断是否 LVM
+is_lvm() {
+  lsblk -no TYPE "$target_dev" | grep -q lvm && return 0 || return 1
 }
 
-# =========================
-# 校验结果
-# =========================
-check_result() {
-    echo "=== 分区信息 ==="
-    lsblk
-    echo "=== 文件系统大小 ==="
-    df -Th
+# 扩容 LVM
+resize_lvm() {
+  pv=$(pvs --noheadings -o pv_name | grep "$target_dev" || true)
+
+  if [[ -z "$pv" ]]; then
+    pvcreate $target_dev
+  fi
+
+  vg=$(vgs --noheadings -o vg_name | head -1 | xargs)
+  lv=$(lvs --noheadings -o lv_path | head -1 | xargs)
+
+  echo "[INFO] VG: $vg | LV: $lv"
+
+  vgextend $vg $target_dev || true
+  lvextend -l +100%FREE $lv
+  resize_fs "$lv"
 }
 
-# =========================
+# 扩容文件系统
+resize_fs() {
+  dev=${1:-$target_dev}
+  fs=$(lsblk -no FSTYPE "$dev")
+  mnt=$(lsblk -no MOUNTPOINT "$dev")
+
+  echo "[INFO] 文件系统类型: $fs"
+  case "$fs" in
+    ext2|ext3|ext4)
+      resize2fs $dev
+      ;;
+    xfs)
+      xfs_growfs $mnt
+      ;;
+    *)
+      echo "[WARN] 不支持的文件系统"
+      ;;
+  esac
+}
+
 # 主流程
-# =========================
-echo "=== 云盘扩容脚本 ==="
-read -p "是否继续操作？(yes/no): " ans
-[[ "$ans" == "yes" ]] || { echo "操作已取消"; exit 1; }
 install_tools
-choose_disk
+select_disk
+get_partition
+confirm_action
 resize_partition
-resize_filesystem
-check_result
-echo "🎉 云盘扩容完成"
+if is_lvm; then
+  resize_lvm
+else
+  resize_fs
+fi
+
+lsblk
+df -Th
+
+echo "✔ 扩容完成"
