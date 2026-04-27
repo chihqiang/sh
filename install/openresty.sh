@@ -2,7 +2,7 @@
 set -eu
 
 # ===============================================================
-# 🚀 OpenResty 一键安装脚本（支持 Ubuntu / Debian / CentOS / RHEL）
+# 🚀 OpenResty 安装/卸载工具（支持 Ubuntu / Debian / CentOS / RHEL）
 #
 # 👉 使用方式（直接运行）：
 #       curl -o- https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/install/openresty.sh | bash
@@ -30,6 +30,8 @@ case "$ARCH" in
 esac
 
 echo "[*] 检测结果：$OS_ID $OS_VER_ID ($ARCH)"
+
+# ==================== 安装相关 ====================
 
 import_openresty_gpg() {
     echo "[*] 导入 GPG 公钥..."
@@ -149,24 +151,127 @@ install_openresty_rhel() {
     sudo yum install -y openresty
 }
 
-# 执行安装流程
-case "$OS_ID" in
-    ubuntu)
-        install_openresty_ubuntu
+do_install() {
+    echo ""
+    echo "开始安装 OpenResty..."
+    echo ""
+
+    case "$OS_ID" in
+        ubuntu)
+            install_openresty_ubuntu
+            ;;
+        debian)
+            install_openresty_debian
+            ;;
+        centos)
+            install_openresty_centos
+            ;;
+        rhel)
+            install_openresty_rhel
+            ;;
+        *)
+            echo "[!] 暂不支持您的系统: $OS_ID"
+            exit 1
+            ;;
+    esac
+
+    echo "[✓] OpenResty 安装完成！"
+}
+
+# ==================== 卸载相关 ====================
+
+uninstall_openresty_debian_ubuntu() {
+    echo "[*] 停止并禁用 OpenResty 服务..."
+    sudo systemctl stop openresty.service || true
+    sudo systemctl disable openresty.service || true
+
+    echo "[*] 卸载 OpenResty 及其组件..."
+    sudo apt-get remove --purge -y openresty openresty-resty || true
+    sudo apt-get autoremove -y
+
+    echo "[*] 移除 OpenResty APT 源..."
+    sudo rm -f /etc/apt/sources.list.d/openresty.list
+
+    echo "[*] 移除 GPG 公钥..."
+    if command -v apt-key >/dev/null 2>&1; then
+        KEY_ID=$(apt-key list 2>/dev/null | grep -B1 'openresty' | head -n1 | awk '{print $2}')
+        if [ -n "$KEY_ID" ]; then
+            sudo apt-key del "$KEY_ID" || true
+        fi
+    fi
+
+    sudo rm -f /etc/apt/trusted.gpg.d/openresty.gpg || true
+    sudo find /etc/apt/trusted.gpg.d/ -name "*openresty*" -exec rm -f {} \;
+
+    echo "[*] 更新 APT 索引..."
+    sudo apt-get update
+}
+
+uninstall_openresty_centos_rhel() {
+    echo "[*] 停止并禁用 OpenResty 服务..."
+    sudo systemctl stop openresty.service || true
+    sudo systemctl disable openresty.service || true
+
+    echo "[*] 卸载 OpenResty..."
+    sudo yum remove -y openresty openresty-resty || true
+
+    echo "[*] 移除 OpenResty YUM 源..."
+    sudo rm -f /etc/yum.repos.d/openresty.repo
+    sudo rm -f /etc/yum.repos.d/openresty2.repo
+
+    echo "[*] 清理缓存..."
+    sudo yum clean all
+}
+
+do_uninstall() {
+    echo ""
+    echo "开始卸载 OpenResty..."
+    echo ""
+
+    case "$OS_ID" in
+        ubuntu|debian)
+            uninstall_openresty_debian_ubuntu
+            ;;
+        centos|rhel)
+            uninstall_openresty_centos_rhel
+            ;;
+        *)
+            echo "[!] 暂不支持您的系统: $OS_ID"
+            exit 1
+            ;;
+    esac
+
+    echo "[✓] OpenResty 卸载完成！"
+}
+
+# ==================== 主流程 ====================
+
+echo ""
+echo "============================================"
+echo "       OpenResty 安装/卸载工具"
+echo "============================================"
+echo ""
+echo "请选择操作："
+echo "  1) 安装 OpenResty"
+echo "  2) 卸载 OpenResty"
+echo "  3) 退出"
+echo ""
+
+read -p "请输入选项 [1-3]: " choice
+
+case "$choice" in
+    1)
+        do_install
         ;;
-    debian)
-        install_openresty_debian
+    2)
+        do_uninstall
         ;;
-    centos)
-        install_openresty_centos
-        ;;
-    rhel)
-        install_openresty_rhel
+    3)
+        echo "已退出"
+        exit 0
         ;;
     *)
-        echo "[!] 暂不支持您的系统: $OS_ID"
+        echo "无效选项，请输入 1-3"
         exit 1
         ;;
 esac
-
-echo "[✓] OpenResty 安装完成！"

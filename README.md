@@ -31,6 +31,14 @@ Git 分支合并工具，支持切换、合并、推送和切回原分支
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/git/cpmp.sh)"
 ```
 
+### delete-current-branch.sh
+
+交互式安全删除当前 Git 分支，自动切换到主分支，支持删除本地和远程分支
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/git/delete-current-branch.sh)"
+```
+
 ### emoji-hook.sh
 
 为 Git 提交信息自动添加 Emoji 前缀，支持 feat/fix/docs 等常用类型
@@ -125,34 +133,18 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/
 
 ### openresty.sh
 
-一键安装 OpenResty Web 服务器（支持 Ubuntu/Debian/CentOS/RHEL）
+OpenResty 安装/卸载工具（支持 Ubuntu/Debian/CentOS/RHEL），交互式选择安装或卸载
 
 ```bash
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/install/openresty.sh)"
 ```
 
-### openrestyu.sh
-
-卸载 OpenResty 及相关配置
-
-```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/install/openrestyu.sh)"
-```
-
 ### podman.sh
 
-安装 Podman 容器运行时（支持 macOS/Ubuntu/Debian/CentOS/RHEL/Fedora）
+Podman 安装/卸载工具，支持 macOS/Ubuntu/Debian/CentOS/RHEL/Fedora，交互式选择安装或卸载
 
 ```bash
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/install/podman.sh)"
-```
-
-### podmanu.sh
-
-卸载 Podman 容器运行时
-
-```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/install/podmanu.sh)"
 ```
 
 ## Go 开发
@@ -167,20 +159,12 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/
 
 ## Linux 工具
 
-### disk_mount.sh
+### disk.sh
 
-ECS 云盘一键初始化，支持分区、格式化、挂载和开机自动挂载
-
-```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/liunx/disk_mount.sh)"
-```
-
-### disk_expand.sh
-
-ECS 云盘扩容脚本，支持 LVM 自动扩容和交互式选择磁盘
+云盘管理工具，支持云盘初始化挂载和云盘扩容（支持 ext4/XFS/LVM）
 
 ```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/liunx/disk_expand.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/liunx/disk.sh)"
 ```
 
 ### syscheck.sh
