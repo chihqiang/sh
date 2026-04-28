@@ -185,6 +185,14 @@ Wi-Fi 管理脚本，支持列出、查看密码和删除保存的 Wi-Fi 网络
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/mac/wifi.sh)"
 ```
 
+### brew.sh
+
+Homebrew 清华镜像管理工具，支持安装、切换镜像源、恢复官方源、卸载等
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/mac/brew.sh)"
+```
+
 ### uv.sh
 
 自动安装 Mac 开发环境，包括 Homebrew、UV 包管理器和代码规范工具
