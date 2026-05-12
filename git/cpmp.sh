@@ -119,17 +119,35 @@ else
 fi
 
 # === 询问是否切换回原分支 ===
-# 提示用户是否回到原来的分支
-read -p "分支已经完成合并，是否回到 '$current_branch' 分支? (y/n): " confirmation
-if [[ ! "$confirmation" =~ ^[Yy]$ ]]; then
-  echo "切换到 $current_branch 已取消."
-  exit 0
-fi
+# 提示用户选择操作
+echo ""
+divider
+echo "请选择操作："
+echo "  1) 切换回原分支 '$current_branch'"
+echo "  2) 删除原分支 '$current_branch' (包含远程)"
+divider
+read -p "请输入选项 [1-2]: " choice
 
-# === 切换回原分支 ===
-# 使用 git checkout 命令切换回原来的分支
-step "正在切换回原分支 '$current_branch' ..."
-git checkout "$current_branch" || { error "切换到 $current_branch 分支失败！"; exit 1; }
+case "$choice" in
+  1)
+    # === 切换回原分支 ===
+    step "正在切换回原分支 '$current_branch' ..."
+    git checkout "$current_branch" || { error "切换到 $current_branch 分支失败！"; exit 1; }
+    ;;
+  2)
+    # === 删除本地分支 ===
+    step "正在删除本地分支 '$current_branch' ..."
+    git branch -d "$current_branch" || warning "本地分支删除失败或已不存在"
+
+    # === 删除远程分支 ===
+    step "正在删除远程分支 '$current_branch' ..."
+    git push origin --delete "$current_branch" 2>/dev/null || warning "远程分支删除失败（可能已不存在或无权限）"
+    ;;
+  *)
+    echo "无效选项，已取消操作。"
+    exit 0
+    ;;
+esac
 
 # 输出分隔符，表示操作结束
 divider
