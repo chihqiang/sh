@@ -62,8 +62,8 @@ fi
 # 检查 vsce
 if ! command -v vsce >/dev/null 2>&1; then
     echo "❌ vsce 未安装"
-    echo "   安装：npm install -g vsce"
-    npm install -g vsce
+    echo "   安装：npm install -g @vscode/vsce"
+    npm install -g @vscode/vsce
 else
     echo "✅ vsce 已存在"
 fi
