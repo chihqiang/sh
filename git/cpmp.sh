@@ -123,18 +123,23 @@ fi
 echo ""
 divider
 echo "请选择操作："
-echo "  1) 切换回原分支 '$current_branch'"
-echo "  2) 删除原分支 '$current_branch' (包含远程)"
+echo "  1) 留在目标分支 '$target_branch'"
+echo "  2) 切换回原分支 '$current_branch'"
+echo "  3) 删除原分支 '$current_branch' (包含远程)"
 divider
-read -p "请输入选项 [1-2]: " choice
+read -p "请输入选项 [1-3]: " choice
 
 case "$choice" in
   1)
+    # === 留在目标分支 ===
+    success "已留在目标分支 '$target_branch'"
+    ;;
+  2)
     # === 切换回原分支 ===
     step "正在切换回原分支 '$current_branch' ..."
     git checkout "$current_branch" || { error "切换到 $current_branch 分支失败！"; exit 1; }
     ;;
-  2)
+  3)
     # === 删除本地分支 ===
     step "正在删除本地分支 '$current_branch' ..."
     git branch -d "$current_branch" || warning "本地分支删除失败或已不存在"
