@@ -54,7 +54,7 @@ fi
 if ! command -v yo >/dev/null 2>&1; then
     echo "❌ yo 未安装"
     echo "   安装：npm install -g yo generator-code"
-    exit 1
+    npm install -g yo generator-code
 else
     echo "✅ yo 已存在"
 fi
@@ -62,8 +62,8 @@ fi
 # 检查 vsce
 if ! command -v vsce >/dev/null 2>&1; then
     echo "❌ vsce 未安装"
-    echo "   安装：npm install -g @vscode/vsce"
-    exit 1
+    echo "   安装：npm install -g vsce"
+    npm install -g vsce
 else
     echo "✅ vsce 已存在"
 fi
