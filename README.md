@@ -47,6 +47,14 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/
 curl -sSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/git/emoji-hook.sh | bash
 ```
 
+### gac.sh
+
+Git 多账号 SSH 配置工具，支持生成 SSH 密钥、配置 ~/.ssh/config、绑定 Git 提交身份，适用于 GitHub/Gitee/GitLab/自建 Git
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/git/gac.sh)"
+```
+
 ### svn2git.sh
 
 将 SVN 仓库迁移为 Git 仓库，支持转换 tags 和自动推送
@@ -207,6 +215,22 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/
 
 ```bash
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/mac/jmeter.sh)"
+```
+
+### vscode-extension.sh
+
+VS Code 插件开发环境检查脚本，检查 Homebrew、VS Code 命令行工具、Node.js/npm、yo 脚手架和 vsce 打包工具
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/mac/vscode-extension.sh)"
+```
+
+### uv.sh
+
+自动安装 Mac 开发环境，包括 Homebrew、UV 包管理器和代码规范工具
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/mac/uv.sh)"
 ```
 
 ## MySQL 数据库
