@@ -77,9 +77,10 @@ readonly ROOT
 readonly PROJECTS=(
   git@github.com:chihqiang/ccsim-svr.git
   git@github.com:chihqiang/llm-gate.git
+  git@github.com:chihqiang/dskpanel.git
   git@github.com:chihqiang/q-iam.git
   git@github.com:chihqiang/msg-push.git
-  git@github.com:chihqiang/q-chat.git
+  git@github.com:chihqiang/q-chat.git  
 )
 
 # 本地仓库根目录，默认脚本同级目录
