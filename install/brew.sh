@@ -14,7 +14,7 @@
 # - 交互简洁，执行一次自动退出
 # 运行示例：
 #   1. 直接通过 curl 一键执行脚本（默认使用设备 en0）：
-#      bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/mac/brew.sh)"
+#      bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/install/brew.sh)"
 # 官方源：
 # - https://mirrors.tuna.tsinghua.edu.cn/help/homebrew/
 # ==============================================

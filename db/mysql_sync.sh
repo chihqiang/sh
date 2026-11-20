@@ -42,7 +42,7 @@ set -euo pipefail
 #   export REMOTE_DB=mydb
 #   export REMOTE_USER=root
 #   export REMOTE_PASS=123456
-#   bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/mysql/sync.sh)"
+#   bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/db/mysql_sync.sh)"
 #
 # 作者：
 #   [你的名字或联系方式]

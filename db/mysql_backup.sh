@@ -25,7 +25,7 @@ set -euo pipefail
 #   export LOCAL_DB=mydb
 #   export LOCAL_USER=root
 #   export LOCAL_PASS=123456
-#   bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/mysql/backup.sh)"
+#   bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/db/mysql_backup.sh)"
 #
 # 作者：
 #   zhiqiang

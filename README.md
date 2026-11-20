@@ -2,6 +2,18 @@
 
 本人常用的 shell 脚本
 
+## 目录结构
+
+```text
+git/          Git 工具
+install/      软件与环境安装
+linux/        Linux 运维工具
+mac/          macOS 工具
+db/           MySQL 数据库工具
+net/          网络工具
+dev/          开发工具
+```
+
 ## Git 工具
 
 ### user.sh
@@ -31,28 +43,12 @@ Git 分支合并工具，支持切换、合并、推送和切回原分支
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/git/cpmp.sh)"
 ```
 
-### delete-current-branch.sh
-
-交互式安全删除当前 Git 分支，自动切换到主分支，支持删除本地和远程分支
-
-```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/git/delete-current-branch.sh)"
-```
-
 ### emoji-hook.sh
 
 为 Git 提交信息自动添加 Emoji 前缀，支持 feat/fix/docs 等常用类型
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/git/emoji-hook.sh | bash
-```
-
-### gac.sh
-
-Git 多账号 SSH 配置工具，支持生成 SSH 密钥、配置 ~/.ssh/config、绑定 Git 提交身份，适用于 GitHub/Gitee/GitLab/自建 Git
-
-```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/git/gac.sh)"
 ```
 
 ### svn2git.sh
@@ -65,71 +61,7 @@ export GIT_REMOTE_URL="https://github.com/yourname/project.git"
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/git/svn2git.sh)"
 ```
 
-## 远程部署
-
-### ssh.sh
-
-自动化部署脚本，打包本地项目并上传到一台或多台远程服务器
-
-```bash
-export DEPLOY_HOSTS=ubuntu:password@192.168.1.100:22
-export POST_DEPLOY_CMD="pm2 restart app"
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/deploy/ssh.sh)"
-```
-
-## 容器管理
-
-### run.sh
-
-容器运行工具，支持 Docker/Podman，自动检测引擎
-
-```bash
-export C_IMAGE=nginx:latest
-export C_PORT_MAP="8080:80"
-export C_MOUNT_MAP="/data/www:/usr/share/nginx/html"
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/container/run.sh)"
-```
-
-### buildrun.sh
-
-Docker/Podman 镜像构建并运行工具
-
-```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/container/buildrun.sh)"
-```
-
 ## 环境安装
-
-### golang.sh
-
-安装 Go 语言环境，支持指定版本和阿里云镜像
-
-```bash
-export GO_VERSION=1.22.3
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/install/golang.sh)"
-```
-
-### goinstall.sh
-
-快速安装 Go 工具包，自动下载 Go 并安装指定包
-
-```bash
-export GO_PACKAGE="github.com/spf13/cobra-cli/cmd/cobra@latest"
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/install/goinstall.sh)"
-```
-
-### golangs.sh
-
-下载并安装 Git 仓库 release 中的二进制工具
-
-```bash
-export VERSION=v0.0.1
-export GIT_DOMAIN=github.com
-export GIT_USERNAME=zhiqiangwang
-export GIT_REPO=tlsctl
-export BIN_NAME=tlsctl
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/install/golangs.sh)"
-```
 
 ### ondrej.sh
 
@@ -155,14 +87,28 @@ Podman 安装/卸载工具，支持 macOS/Ubuntu/Debian/CentOS/RHEL/Fedora，交
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/install/podman.sh)"
 ```
 
-## Go 开发
+### brew.sh
 
-### rename.sh
-
-交互式重命名 Go Module 名称并迁移 import 路径
+Homebrew 清华镜像管理工具，支持安装、切换镜像源、恢复官方源、卸载等
 
 ```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/golang/rename.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/install/brew.sh)"
+```
+
+### uv.sh
+
+自动安装 Mac 开发环境，包括 Homebrew、UV 包管理器和代码规范工具
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/install/uv.sh)"
+```
+
+### jmeter.sh
+
+在 macOS 上通过 Homebrew 安装 Apache JMeter，并配置默认中文界面
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/install/jmeter.sh)"
 ```
 
 ## Linux 工具
@@ -172,7 +118,7 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/
 云盘管理工具，支持云盘初始化挂载和云盘扩容（支持 ext4/XFS/LVM）
 
 ```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/liunx/disk.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/linux/disk.sh)"
 ```
 
 ### syscheck.sh
@@ -180,10 +126,10 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/
 Linux 系统巡检工具，检查系统信息、安全风险、性能和磁盘等
 
 ```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/liunx/syscheck.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/linux/syscheck.sh)"
 ```
 
-## Mac 工具
+## macOS 工具
 
 ### wifi.sh
 
@@ -191,30 +137,6 @@ Wi-Fi 管理脚本，支持列出、查看密码和删除保存的 Wi-Fi 网络
 
 ```bash
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/mac/wifi.sh)"
-```
-
-### brew.sh
-
-Homebrew 清华镜像管理工具，支持安装、切换镜像源、恢复官方源、卸载等
-
-```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/mac/brew.sh)"
-```
-
-### uv.sh
-
-自动安装 Mac 开发环境，包括 Homebrew、UV 包管理器和代码规范工具
-
-```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/mac/uv.sh)"
-```
-
-### jmeter.sh
-
-在 macOS 上通过 Homebrew 安装 Apache JMeter，并配置默认中文界面
-
-```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/mac/jmeter.sh)"
 ```
 
 ### vscode-extension.sh
@@ -225,17 +147,40 @@ VS Code 插件开发环境检查脚本，检查 Homebrew、VS Code 命令行工�
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/mac/vscode-extension.sh)"
 ```
 
-### uv.sh
+### cleanup.sh
 
-自动安装 Mac 开发环境，包括 Homebrew、UV 包管理器和代码规范工具
+macOS 清理脚本：清理过期日志与临时文件，删除已卸载应用的残留数据（默认只预览，不删除任何文件）
+
+清理范围：
+
+- `~/Library/Logs`、诊断报告，以及 `$TMPDIR`、`/tmp`、`/private/var/tmp` 中超过 N 天的文件
+- 已卸载应用残留：`Containers`、`Group Containers`、`Preferences`、`Caches`、`HTTPStorages`、`WebKit`、`Saved Application State`、`Application Support`（按脚本内 `APP_RULES` 表）
+- 失效的 `LaunchAgents` / `LaunchDaemons`、`/usr/local/bin` 死链
+- `SKILL_DIRS_BLACKLIST` 中的目录（**无条件删除**，与对应 App 是否安装无关）
 
 ```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/mac/uv.sh)"
+# 预览（默认，只打印将删除的内容）
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/mac/cleanup.sh)"
+
+# 执行清理（会先确认）
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/mac/cleanup.sh)" _ --apply
+
+# 定时任务：不确认直接执行，只清理 30 天前的文件
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/mac/cleanup.sh)" _ --apply --yes --days 30
 ```
 
-## MySQL 数据库
+| 参数 | 说明 |
+|---|---|
+| 无参数 | 预览模式，不删除任何文件 |
+| `--apply` | 执行清理，默认会二次确认 |
+| `--yes` | 跳过确认，适合定时任务 |
+| `--days N` | 只处理 N 天前的日志/临时文件（默认 7） |
+| `--system` | 同时清理系统级 `/var/log`、`/Library/Logs`（需要 sudo） |
+| `--no-color` | 关闭彩色输出 |
 
-### backup.sh
+## 数据库
+
+### mysql_backup.sh
 
 MySQL 单库备份脚本，导出数据库为 SQL 文件
 
@@ -245,10 +190,10 @@ export LOCAL_PORT=3306
 export LOCAL_DB=mydb
 export LOCAL_USER=root
 export LOCAL_PASS=password
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/mysql/backup.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/db/mysql_backup.sh)"
 ```
 
-### sync.sh
+### mysql_sync.sh
 
 MySQL 数据库迁移脚本，本地导出并导入至远程数据库
 
@@ -261,7 +206,7 @@ export REMOTE_HOST=192.168.1.100
 export REMOTE_DB=mydb
 export REMOTE_USER=root
 export REMOTE_PASS=123456
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/mysql/sync.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/db/mysql_sync.sh)"
 ```
 
 ## 网络工具
@@ -276,36 +221,12 @@ export PING_COUNT=4
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/net/ping.sh)"
 ```
 
-## PHP 工具
-
-### check_syntax.sh
-
-批量检查当前目录下所有 PHP 文件的语法（排除 vendor 和 node_modules）
-
-```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/php/check_syntax.sh)"
-```
-
-## GitHub 工具
-
-### del-actions.sh
-
-批量删除 GitHub Actions 运行记录，保留最近 N 条
-
-```bash
-export GITHUB_OWNER=username
-export GITHUB_REPO=my-repo
-export GITHUB_TOKEN=ghp_xxx
-export GITHUB_KEEP_LATEST=5
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/github/del-actions.sh)"
-```
-
-## 项目工具
+## 开发工具
 
 ### init-vue.sh
 
 自动化创建 Vue 3 项目（TypeScript + Router + Pinia + ESLint + Prettier）
 
 ```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/project/init-vue.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/dev/init-vue.sh)"
 ```

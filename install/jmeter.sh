@@ -12,9 +12,9 @@
 #           3. 拥有 macOS 系统管理员权限（部分 brew 操作可能需要输入密码）
 # 运行方式：
 #           方式1：curl 一键执行（无需手动保存脚本）
-#               bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/mac/jmeter.sh)"
+#               bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/install/jmeter.sh)"
 #           方式2：手动下载并执行（适合需查看脚本内容场景）
-#               1. 下载脚本：curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/mac/jmeter.sh -o install_jmeter.sh
+#               1. 下载脚本：curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/install/jmeter.sh -o install_jmeter.sh
 #               2. 赋予权限：chmod +x install_jmeter.sh
 #               3. 运行脚本：./install_jmeter.sh
 # 注意事项：

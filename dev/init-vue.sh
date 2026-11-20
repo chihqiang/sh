@@ -5,7 +5,7 @@ set -euo pipefail
 # 脚本名称：init-vue.sh
 # 脚本作用：自动化创建 Vue 3 项目（TypeScript + Router + Pinia + ESLint + Prettier）
 # 使用方式：
-#  bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/project/init-vue.sh)"
+#  bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/dev/init-vue.sh)"
 # 默认项目名：vue-app（可在提示时修改）
 # 功能：
 #   - 检查 npm 是否安装

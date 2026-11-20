@@ -5,7 +5,7 @@ set -euo pipefail
 # 功能: Linux 磁盘管理工具，支持云盘初始化挂载和云盘扩容
 # 适用环境: Linux 云服务器 (Debian/Ubuntu/CentOS/RHEL/Alibaba Linux 等)
 # 使用方法:
-#   bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/liunx/disk.sh)"
+#   bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/linux/disk.sh)"
 # ===============================================================================
 
 # ---------------------- 确认函数 ----------------------

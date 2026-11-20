@@ -11,7 +11,7 @@ set -euo pipefail
 # - 使用数组管理工具列表，易于扩展
 # - 日志干净美观，无冗余输出
 # 使用
-#    bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/mac/uv.sh)"
+#    bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/install/uv.sh)"
 # ==============================================
 info() {
   echo -e "\033[32m✅ $1\033[0m"

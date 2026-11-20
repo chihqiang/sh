@@ -21,7 +21,7 @@ set -euo pipefail
 # 使用方法:
 #   bash syscheck.sh               # 终端输出
 #   bash syscheck.sh -o output.txt # 同时保存到文件
-#   bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/liunx/syscheck.sh)"
+#   bash -c "$(curl -fsSL https://raw.githubusercontent.com/chihqiang/sh/refs/heads/main/linux/syscheck.sh)"
 #
 # 颜色说明:
 #   Green  : 信息
